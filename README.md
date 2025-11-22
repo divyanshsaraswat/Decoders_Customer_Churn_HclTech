@@ -19,6 +19,19 @@ A comprehensive machine learning solution for predicting customer churn with an 
 - [Contributing](#contributing)
 
 ---
+## ✒️ Design Architecture
+![Design Architecture Image](https://github.com/user-attachments/assets/c3b1eebb-5dfd-4e3f-b315-03f326e1967e)
+
+---
+
+## 🖥️ Deployed Showcase
+<img width="1913" height="910" alt="1" src="https://github.com/user-attachments/assets/b30a9757-cc06-4f8e-abd2-49f381f4e37b" />
+<img width="1902" height="887" alt="2" src="https://github.com/user-attachments/assets/c84178b8-ea6e-4085-ac5f-9f7f61ec7b57" />
+<img width="1885" height="892" alt="3" src="https://github.com/user-attachments/assets/1724fc96-00cd-4d63-afb8-d5701c484370" />
+<img width="1908" height="875" alt="4" src="https://github.com/user-attachments/assets/b271aad2-a123-45f4-bc80-be6936e9066e" />
+<img width="1918" height="892" alt="5" src="https://github.com/user-attachments/assets/e1cb9980-99ce-43db-91c5-3938c4ddd531" />
+
+---
 
 ## 🌟 Overview
 
@@ -503,6 +516,7 @@ st.markdown("""
 - Error: `STACK_GLOBAL requires str` - pickle compatibility issue between Python versions
 
 **Impact**:
+- Model pickel's predictions has been verified by random test-cases in the notebook attached itself.
 - Model cannot be loaded in production environment
 - Application fails to make predictions
 - Requires manual intervention to fix version conflicts
@@ -512,10 +526,6 @@ st.markdown("""
 - Retrain model in deployment environment
 - Use `joblib` instead of `pickle` for better compatibility
 
-**Lessons Learned**:
-- Always document exact environment specifications
-- Consider using model versioning tools (MLflow, DVC)
-- Test deployment in staging environment before production
 
 #### 2. **Library Version Compatibility**
 
