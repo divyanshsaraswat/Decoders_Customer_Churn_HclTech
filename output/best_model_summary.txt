@@ -1,0 +1,50 @@
+Final selected model: Stacking_ensemble
+
+Test metrics:
+accuracy:
+0.768
+
+precision:
+0.7759674134419552
+
+recall:
+0.757455268389662
+
+f1:
+0.7665995975855131
+
+roc_auc:
+0.8490385653883541
+
+confusion_matrix:
+[[387 110]
+ [122 381]]
+
+classification_report:
+              precision    recall  f1-score   support
+
+           0       0.76      0.78      0.77       497
+           1       0.78      0.76      0.77       503
+
+    accuracy                           0.77      1000
+   macro avg       0.77      0.77      0.77      1000
+weighted avg       0.77      0.77      0.77      1000
+
+
+Top features (approx):
+                   feature  importance
+       monthly_usage_hours    0.220712
+         log_monthly_usage    0.219987
+           usage_intensity    0.134919
+                       age    0.078177
+           complaint_ratio    0.076675
+      log_num_transactions    0.062032
+          num_transactions    0.061005
+                complaints    0.046044
+   subscription_type_Basic    0.019399
+               gender_Male    0.012835
+             gender_Female    0.012072
+              gender_Other    0.011916
+          age_bucket_Adult    0.009773
+ subscription_type_Premium    0.009643
+subscription_type_Standard    0.009365
