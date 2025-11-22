@@ -488,6 +488,81 @@ st.markdown("""
 
 ---
 
+## 🚧 Challenges Faced and Future Improvements
+
+### Challenges Encountered
+
+#### 1. **Model Deployment and Serialization Issues** 🔴
+
+**Problem**: The trained model (`model.pkl`) fails to load in the deployed Streamlit environment due to library version mismatches.
+
+**Root Cause**:
+- The model was trained using specific versions of `scikit-learn` and `imbalanced-learn`
+- Deployment environment may have different versions installed
+- Pickle serialization is not version-agnostic and breaks with version mismatches
+- Error: `STACK_GLOBAL requires str` - pickle compatibility issue between Python versions
+
+**Impact**:
+- Model cannot be loaded in production environment
+- Application fails to make predictions
+- Requires manual intervention to fix version conflicts
+
+**Current Workaround**:
+- Pin exact library versions in `requirements.txt`
+- Retrain model in deployment environment
+- Use `joblib` instead of `pickle` for better compatibility
+
+**Lessons Learned**:
+- Always document exact environment specifications
+- Consider using model versioning tools (MLflow, DVC)
+- Test deployment in staging environment before production
+
+#### 2. **Library Version Compatibility**
+
+**Issue**: `scikit-learn` and `imbalanced-learn` version conflicts across different environments
+
+**Specific Problems**:
+- Training environment: `scikit-learn==1.6.1`, `imbalanced-learn==0.12.0`
+- Deployment environment: May have `scikit-learn==1.7.1` or other versions
+- Breaking changes in scikit-learn API between versions
+- SMOTE and other imbalanced-learn functions behave differently
+
+**Solutions Attempted**:
+- ✅ Strict version pinning in `requirements.txt`
+- ✅ Virtual environment isolation
+- ⚠️ Model retraining (time-consuming)
+- ❌ Backward compatibility (not always possible)
+
+---
+
+### 🔮 Future Improvements
+
+#### 1. **Model Deployment and Versioning** 🎯
+
+**Priority**: HIGH
+
+- [ ] **Implement MLflow** for model versioning and tracking
+  - Track experiments, parameters, and metrics
+  - Version models with metadata
+  - Easy model rollback and comparison
+
+- [ ] **Use ONNX format** for model serialization
+  - Framework-agnostic model format
+  - Better cross-platform compatibility
+  - Faster inference
+
+- [ ] **Docker containerization**
+  - Package entire environment (Python + libraries + model)
+  - Ensure consistency across development and production
+  - Easier deployment and scaling
+
+- [ ] **Model registry**
+  - Centralized model storage
+  - Version control for models
+  - Automated deployment pipelines
+
+---
+
 ## 🤝 Contributing
 
 Contributions are welcome! Here's how you can help:
