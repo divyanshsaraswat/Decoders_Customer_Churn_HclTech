@@ -43,11 +43,8 @@ Churning/
 │
 ├── Customer_Churn_Prediction_.ipynb  # Complete model training notebook
 ├── app.py                             # Streamlit web application
-├── retrain_model.py                   # Script to retrain model
-├── generate_sample_data.py            # Generate sample prediction data
 ├── requirements.txt                   # Python dependencies
 ├── README.md                          # This file
-├── QUICKSTART.md                      # Quick start guide
 │
 ├── netflix_customer_churn.csv         # Training dataset
 ├── model.pkl                          # Trained model (pickle format)
