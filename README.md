@@ -563,16 +563,6 @@ st.markdown("""
 
 ---
 
-## 🤝 Contributing
-
-Contributions are welcome! Here's how you can help:
-
-1. **Report Bugs**: Open an issue with details
-2. **Suggest Features**: Share ideas for improvements
-3. **Submit Pull Requests**: Fix bugs or add features
-4. **Improve Documentation**: Enhance README or add tutorials
-
----
 
 ## 📄 License
 
@@ -611,11 +601,9 @@ pip install -r requirements.txt
 # Run Streamlit app
 streamlit run app.py
 
-# Retrain model
-python retrain_model.py
 
-# Generate sample data
-python generate_sample_data.py
+
+
 
 # Check Python version
 python --version
