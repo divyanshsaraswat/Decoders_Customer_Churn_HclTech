@@ -30,37 +30,189 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+# Sidebar Configuration
+st.sidebar.title("🎯 Navigation")
+page = st.sidebar.radio(
+    "Go to",
+    ["🏠 Single Prediction", "📁 Batch Prediction", "📊 EDA Dashboard", "ℹ️ About Dataset"]
+)
+
+st.sidebar.markdown("---")
+st.sidebar.subheader("⚙️ Settings")
+dark_mode = st.sidebar.toggle("Dark Mode", value=True)
+
+# Define Theme Colors
+if dark_mode:
+    # Dark Mode Colors
+    primary_color = "#1f77b4"
+    background_color = "#0e1117"
+    secondary_background_color = "#262730"
+    text_color = "#fafafa"
+    card_shadow = "rgba(0, 0, 0, 0.3)"
+else:
+    # Light Mode Colors
+    primary_color = "#1f77b4"
+    background_color = "#ffffff"
+    secondary_background_color = "#f0f2f6"
+    text_color = "#31333F"
+    card_shadow = "rgba(0, 0, 0, 0.1)"
+
 # Custom CSS for better styling
-st.markdown("""
+st.markdown(f"""
     <style>
-    .main {
-        padding: 0rem 1rem;
-    }
-    .stMetric {
-        background-color: #f0f2f6;
-        padding: 15px;
-        border-radius: 10px;
-    }
-    .prediction-box {
+    /* Force Theme Colors */
+    :root {{
+        --primary-color: {primary_color};
+        --background-color: {background_color};
+        --secondary-background-color: {secondary_background_color};
+        --text-color: {text_color};
+    }}
+    
+    /* App Background */
+    .stApp {{
+        background-color: {background_color};
+        color: {text_color};
+    }}
+    
+    /* Sidebar Background */
+    section[data-testid="stSidebar"] {{
+        background-color: {secondary_background_color};
+        color: {text_color};
+    }}
+    
+    /* Main container styling */
+    .main {{
+        padding: 2rem;
+    }}
+    
+    /* Card-like container for sections */
+    .st-card {{
+        background-color: {secondary_background_color};
         padding: 20px;
-        border-radius: 10px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
+        border-radius: 15px;
+        box-shadow: 0 4px 6px {card_shadow};
+        margin-bottom: 20px;
+        color: {text_color};
+    }}
+    
+    /* Metric styling */
+    div[data-testid="stMetricValue"] {{
+        font-size: 28px;
+        font-weight: bold;
+        color: {primary_color};
+    }}
+    
+    /* Custom prediction box styling */
+    .prediction-card {{
+        padding: 25px;
+        border-radius: 15px;
         text-align: center;
-        margin: 20px 0;
-    }
-    .success-box {
-        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-    }
-    .warning-box {
-        background: linear-gradient(135deg, #ee0979 0%, #ff6a00 100%);
-    }
-    h1 {
-        color: #1f77b4;
-    }
-    h2 {
-        color: #2c3e50;
-    }
+        margin-bottom: 15px;
+        box-shadow: 0 4px 15px {card_shadow};
+        transition: transform 0.3s ease;
+    }}
+    .prediction-card:hover {{
+        transform: translateY(-5px);
+    }}
+    
+    .success-card {{
+        background: linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%);
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }}
+    
+    .warning-card {{
+        background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }}
+    
+    .prediction-title {{
+        font-size: 24px;
+        font-weight: 800;
+        margin-bottom: 10px;
+    }}
+    
+    .prediction-subtitle {{
+        font-size: 16px;
+        opacity: 0.9;
+    }}
+    
+    /* Interpretation box styling */
+    .interpretation-box {{
+        background-color: {secondary_background_color};
+        border-left: 5px solid {primary_color};
+        padding: 15px;
+        border-radius: 5px;
+        margin-top: 10px;
+        color: {text_color};
+    }}
+    
+    /* Headers */
+    h1, h2, h3 {{
+        font-weight: 700;
+        color: {text_color} !important;
+    }}
+    
+    /* Divider */
+    hr {{
+        margin: 30px 0;
+        border-color: {secondary_background_color};
+    }}
+    
+    /* Plotly Chart Backgrounds */
+    .js-plotly-plot .plotly .main-svg {{
+        background: rgba(0,0,0,0) !important;
+    }}
+    
+    /* Global Text Color Override */
+    p, label, span, li, .stMarkdown {{
+        color: {text_color} !important;
+    }}
+    
+    /* Widget Labels */
+    .stTextInput label, .stSelectbox label, .stSlider label, .stNumberInput label {{
+        color: {text_color} !important;
+    }}
+    
+    /* Input Widget Backgrounds & Text */
+    .stTextInput > div > div > input,
+    .stSelectbox > div > div > div,
+    .stNumberInput > div > div > input {{
+        background-color: {secondary_background_color} !important;
+        color: {text_color} !important;
+    }}
+    
+    /* Selectbox Dropdown Options */
+    div[data-baseweb="popover"] {{
+        background-color: {secondary_background_color} !important;
+    }}
+    div[data-baseweb="menu"] {{
+        background-color: {secondary_background_color} !important;
+        color: {text_color} !important;
+    }}
+    
+    /* Expander and other containers */
+    .streamlit-expanderHeader {{
+        background-color: {secondary_background_color} !important;
+        color: {text_color} !important;
+    }}
+    
+    /* Alert Boxes (Info, Success, Warning, Error) */
+    /* We need to ensure text is readable. 
+       In Light Mode (Dark Text), standard alerts (light bg) work.
+       In Dark Mode (White Text), standard alerts (dark bg) work.
+       Since we are forcing text color globally, we need to be careful with alerts.
+       We'll let alerts inherit the global text color which should match the theme.
+    */
+    div[data-testid="stAlert"] {{
+        background-color: {secondary_background_color};
+        color: {text_color};
+    }}
+    div[data-testid="stAlert"] p {{
+        color: {text_color} !important;
+    }}
+    
     </style>
 """, unsafe_allow_html=True)
 
@@ -134,47 +286,110 @@ def load_dataset(file_path=None, uploaded_file=None):
     except Exception as e:
         return None, f"Error loading dataset: {str(e)}"
 
-def preprocess_input(age, gender, monthly_usage, num_transactions, subscription_type, complaints):
+def preprocess_input(age, gender, monthly_usage, num_transactions, subscription_type, complaints, last_login):
     """Preprocess user input to match model training format"""
-    # Create input dataframe
+    # Create input dataframe with initial columns
     input_data = pd.DataFrame({
-        'Age': [age],
-        'Gender': [gender],
-        'MonthlyUsageHours': [monthly_usage],
-        'NumTransactions': [num_transactions],
-        'SubscriptionType': [subscription_type],
-        'Complaints': [complaints]
+        'age': [age],
+        'gender': [gender],
+        'monthly_usage_hours': [monthly_usage],
+        'num_transactions': [num_transactions],
+        'subscription_type': [subscription_type],
+        'complaints': [complaints],
+        'last_login_days': [last_login]
     })
     
-    # Label encoding for categorical variables
-    gender_mapping = {'Male': 0, 'Female': 1, 'Other': 2}
-    subscription_mapping = {'Basic': 0, 'Standard': 1, 'Premium': 2, 'Gold': 3}
+    # Feature Engineering (must match training logic)
+    # 1. Usage Intensity
+    input_data["usage_intensity"] = input_data["monthly_usage_hours"] / (input_data["num_transactions"] + 1e-6)
     
-    input_data['Gender'] = input_data['Gender'].map(gender_mapping)
-    input_data['SubscriptionType'] = input_data['SubscriptionType'].map(subscription_mapping)
+    # 2. Complaint Ratio
+    input_data["complaint_ratio"] = input_data["complaints"] / (input_data["num_transactions"] + 1e-6)
+    
+    # 3. Log Transforms
+    input_data["log_monthly_usage"] = np.log1p(input_data["monthly_usage_hours"])
+    input_data["log_num_transactions"] = np.log1p(input_data["num_transactions"])
+    
+    # 4. Age Bucket
+    def get_age_bucket(a):
+        if a <= 30:
+            return "Young"
+        elif a <= 50:
+            return "Adult"
+        else:
+            return "Senior"
+            
+    input_data["age_bucket"] = input_data["age"].apply(get_age_bucket)
+    
+    # Note: Label encoding is NOT needed here because the pipeline handles it via OneHotEncoder
+    # The pipeline expects raw strings for categorical variables: 'gender', 'subscription_type', 'age_bucket'
     
     return input_data
 
 def get_feature_importance(model, feature_names):
-    """Extract feature importance from the model if available"""
+    """Extract feature importance from the model pipeline"""
     try:
+        # Try to get transformed feature names from the pipeline first
+        # This is crucial because the model's importances correspond to transformed features
+        if hasattr(model, 'named_steps') and 'preprocessor' in model.named_steps:
+            preprocessor = model.named_steps['preprocessor']
+            try:
+                if hasattr(preprocessor, 'get_feature_names_out'):
+                    # This works for scikit-learn >= 1.0
+                    feature_names = preprocessor.get_feature_names_out()
+            except:
+                pass # Fallback to provided feature_names
+
+        # Case 0: Check for injected feature importances on the main object (from our retraining)
         if hasattr(model, 'feature_importances_'):
-            importance = model.feature_importances_
-            return pd.DataFrame({
-                'Feature': feature_names,
-                'Importance': importance
-            }).sort_values('Importance', ascending=True)
-        else:
-            return None
-    except:
+            importances = model.feature_importances_
+            if len(importances) == len(feature_names):
+                return pd.DataFrame({
+                    'Feature': feature_names,
+                    'Importance': importances
+                }).sort_values('Importance', ascending=True)
+
+        # Check if model is a pipeline
+        if hasattr(model, 'named_steps'):
+            classifier = model.named_steps['classifier']
+            
+            # Case 1: Stacking Classifier
+            if hasattr(classifier, 'estimators_'):
+                # Try to find a tree-based model among base estimators
+                for estimator in classifier.estimators_:
+                    if hasattr(estimator, 'feature_importances_'):
+                        importances = estimator.feature_importances_
+                        # Match lengths if possible
+                        if len(importances) == len(feature_names):
+                            return pd.DataFrame({
+                                'Feature': feature_names,
+                                'Importance': importances
+                            }).sort_values('Importance', ascending=True)
+            
+            # Case 2: Single Tree-based Model
+            elif hasattr(classifier, 'feature_importances_'):
+                importances = classifier.feature_importances_
+                if len(importances) == len(feature_names):
+                    return pd.DataFrame({
+                        'Feature': feature_names,
+                        'Importance': importances
+                    }).sort_values('Importance', ascending=True)
+                    
+            # Case 3: Linear Model (use coefficients)
+            elif hasattr(classifier, 'coef_'):
+                importances = np.abs(classifier.coef_[0])
+                if len(importances) == len(feature_names):
+                    return pd.DataFrame({
+                        'Feature': feature_names,
+                        'Importance': importances
+                    }).sort_values('Importance', ascending=True)
+                    
+        return None
+    except Exception as e:
+        # st.error(f"Error extracting feature importance: {e}")
         return None
 
-# Sidebar Navigation
-st.sidebar.title("🎯 Navigation")
-page = st.sidebar.radio(
-    "Go to",
-    ["🏠 Single Prediction", "📁 Batch Prediction", "📊 EDA Dashboard", "ℹ️ About Dataset"]
-)
+
 
 # Load model automatically
 if st.session_state.model is None:
@@ -208,6 +423,41 @@ if page == "🏠 Single Prediction":
         st.error("⚠️ **Model not loaded!** Please upload a model file in the sidebar or ensure 'model.pkl' exists in the root directory.")
     else:
         st.success("✅ Model is ready for predictions!")
+        
+        # Model Details Expander
+        with st.expander("ℹ️ View Model Details"):
+            model = st.session_state.model
+            st.markdown("### Model Architecture")
+            
+            # Check if it's a pipeline
+            if hasattr(model, 'named_steps'):
+                st.write("**Type:** Scikit-learn Pipeline")
+                st.write("**Steps:**")
+                for step_name, step_obj in model.named_steps.items():
+                    st.code(f"{step_name}: {type(step_obj).__name__}")
+                    
+                # If classifier is StackingClassifier, show base estimators
+                if 'classifier' in model.named_steps:
+                    clf = model.named_steps['classifier']
+                    if hasattr(clf, 'estimators_'):
+                        st.markdown("#### Stacking Ensemble Details")
+                        st.write(f"**Final Estimator:** {type(clf.final_estimator_).__name__}")
+                        st.write("**Base Estimators:**")
+                        for estimator in clf.estimators_:
+                            st.code(f"{type(estimator).__name__}")
+            else:
+                st.write(f"**Type:** {type(model).__name__}")
+                
+            st.markdown("### Expected Features")
+            st.code("""
+- Age (Numeric)
+- Gender (Categorical)
+- MonthlyUsageHours (Numeric)
+- NumTransactions (Numeric)
+- SubscriptionType (Categorical)
+- Complaints (Numeric)
+- LastLoginDays (Numeric)
+            """)
     
     st.markdown("---")
     
@@ -229,6 +479,14 @@ if page == "🏠 Single Prediction":
             "Gender",
             options=['Male', 'Female', 'Other'],
             help="Customer's gender"
+        )
+        
+        last_login = st.slider(
+            "Days Since Last Login",
+            min_value=0,
+            max_value=365,
+            value=10,
+            help="Number of days since the customer last logged in"
         )
     
     with col2:
@@ -274,7 +532,7 @@ if page == "🏠 Single Prediction":
                 # Preprocess input
                 input_data = preprocess_input(
                     age, gender, monthly_usage, 
-                    num_transactions, subscription_type, complaints
+                    num_transactions, subscription_type, complaints, last_login
                 )
                 
                 # Make prediction
@@ -290,80 +548,99 @@ if page == "🏠 Single Prediction":
                 # Display Results
                 st.markdown("### 🎯 Prediction Results")
                 
-                col1, col2, col3 = st.columns([2, 2, 3])
-                
-                with col1:
-                    if prediction == 1:
-                        st.markdown("""
-                            <div class="prediction-box warning-box">
-                                <h2>⚠️ Will Churn</h2>
-                                <p>High risk customer</p>
-                            </div>
-                        """, unsafe_allow_html=True)
-                    else:
-                        st.markdown("""
-                            <div class="prediction-box success-box">
-                                <h2>✅ Will Not Churn</h2>
-                                <p>Low risk customer</p>
-                            </div>
-                        """, unsafe_allow_html=True)
-                
-                with col2:
-                    if churn_probability is not None:
-                        st.metric(
-                            "Churn Probability",
-                            f"{churn_probability:.1f}%",
-                            delta=f"{churn_probability - 50:.1f}% from baseline"
-                        )
-                        
-                        # Probability gauge
-                        fig = go.Figure(go.Indicator(
-                            mode="gauge+number",
-                            value=churn_probability,
-                            domain={'x': [0, 1], 'y': [0, 1]},
-                            title={'text': "Risk Level"},
-                            gauge={
-                                'axis': {'range': [None, 100]},
-                                'bar': {'color': "darkred" if churn_probability > 50 else "darkgreen"},
-                                'steps': [
-                                    {'range': [0, 33], 'color': "lightgreen"},
-                                    {'range': [33, 66], 'color': "yellow"},
-                                    {'range': [66, 100], 'color': "lightcoral"}
-                                ],
-                                'threshold': {
-                                    'line': {'color': "red", 'width': 4},
-                                    'thickness': 0.75,
-                                    'value': 50
-                                }
-                            }
-                        ))
-                        fig.update_layout(height=250, margin=dict(l=20, r=20, t=40, b=20))
-                        st.plotly_chart(fig, use_container_width=True)
-                
-                with col3:
-                    st.markdown("### 💡 Interpretation")
-                    if prediction == 1:
-                        if churn_probability is not None and churn_probability > 75:
-                            st.warning("""
-                                **High Risk Alert!**
-                                - Churn probability is very high
-                                - Immediate retention action recommended
-                                - Consider personalized offers or support
-                            """)
+                # Create a container for results with card styling
+                with st.container():
+                    col1, col2, col3 = st.columns([1, 1, 1.2], gap="large")
+                    
+                    with col1:
+                        st.markdown("#### Status")
+                        if prediction == 1:
+                            st.markdown("""
+                                <div class="prediction-card warning-card">
+                                    <div class="prediction-title">⚠️ Will Churn</div>
+                                    <div class="prediction-subtitle">High Risk Customer</div>
+                                </div>
+                            """, unsafe_allow_html=True)
                         else:
-                            st.info("""
-                                **Moderate Risk**
-                                - Customer shows signs of potential churn
-                                - Monitor engagement closely
-                                - Proactive outreach suggested
-                            """)
-                    else:
-                        st.success("""
-                            **Low Risk Customer**
-                            - Customer is likely to stay
-                            - Continue providing quality service
-                            - Opportunity for upselling
-                        """)
+                            st.markdown("""
+                                <div class="prediction-card success-card">
+                                    <div class="prediction-title">✅ Will Not Churn</div>
+                                    <div class="prediction-subtitle">Low Risk Customer</div>
+                                </div>
+                            """, unsafe_allow_html=True)
+                    
+                    with col2:
+                        st.markdown("#### Probability")
+                        if churn_probability is not None:
+                            st.metric(
+                                "Churn Probability",
+                                f"{churn_probability:.1f}%",
+                                delta=f"{churn_probability - 50:.1f}%",
+                                delta_color="inverse"
+                            )
+                            
+                            # Probability gauge
+                            fig = go.Figure(go.Indicator(
+                                mode="gauge+number",
+                                value=churn_probability,
+                                domain={'x': [0, 1], 'y': [0, 1]},
+                                gauge={
+                                    'axis': {'range': [None, 100], 'tickwidth': 1},
+                                    'bar': {'color': "darkred" if churn_probability > 50 else "darkgreen"},
+                                    'bgcolor': "white",
+                                    'borderwidth': 2,
+                                    'bordercolor': "gray",
+                                    'steps': [
+                                        {'range': [0, 33], 'color': "#d4fc79"},
+                                        {'range': [33, 66], 'color': "#ffe259"},
+                                        {'range': [66, 100], 'color': "#ff9a9e"}
+                                    ],
+                                    'threshold': {
+                                        'line': {'color': "red", 'width': 4},
+                                        'thickness': 0.75,
+                                        'value': 50
+                                    }
+                                }
+                            ))
+                            fig.update_layout(height=160, margin=dict(l=10, r=10, t=10, b=10))
+                            st.plotly_chart(fig, use_container_width=True)
+                    
+                    with col3:
+                        st.markdown("#### Interpretation")
+                        if prediction == 1:
+                            if churn_probability is not None and churn_probability > 75:
+                                st.markdown("""
+                                    <div class="interpretation-box">
+                                        <strong>🚨 High Risk Alert!</strong>
+                                        <ul>
+                                            <li>Churn probability is very high</li>
+                                            <li>Immediate retention action recommended</li>
+                                            <li>Consider personalized offers or support</li>
+                                        </ul>
+                                    </div>
+                                """, unsafe_allow_html=True)
+                            else:
+                                st.markdown("""
+                                    <div class="interpretation-box">
+                                        <strong>⚠️ Moderate Risk</strong>
+                                        <ul>
+                                            <li>Customer shows signs of potential churn</li>
+                                            <li>Monitor engagement closely</li>
+                                            <li>Proactive outreach suggested</li>
+                                        </ul>
+                                    </div>
+                                """, unsafe_allow_html=True)
+                        else:
+                            st.markdown("""
+                                <div class="interpretation-box">
+                                    <strong>🌟 Low Risk Customer</strong>
+                                    <ul>
+                                        <li>Customer is likely to stay</li>
+                                        <li>Continue providing quality service</li>
+                                        <li>Opportunity for upselling</li>
+                                    </ul>
+                                </div>
+                            """, unsafe_allow_html=True)
                 
                 # Feature Summary
                 st.markdown("---")
@@ -432,7 +709,7 @@ elif page == "📁 Batch Prediction":
             st.dataframe(input_df.head(10), use_container_width=True)
             
             # Check for required columns
-            required_cols = ['Age', 'Gender', 'MonthlyUsageHours', 'NumTransactions', 'SubscriptionType', 'Complaints']
+            required_cols = ['Age', 'Gender', 'MonthlyUsageHours', 'NumTransactions', 'SubscriptionType', 'Complaints', 'LastLoginDays']
             missing_cols = [col for col in required_cols if col not in input_df.columns]
             
             if missing_cols:
@@ -450,19 +727,41 @@ elif page == "📁 Batch Prediction":
                                 # Preprocess the data
                                 processed_df = input_df.copy()
                                 
-                                # Label encoding for categorical variables
-                                gender_mapping = {'Male': 0, 'Female': 1, 'Other': 2}
-                                subscription_mapping = {'Basic': 0, 'Standard': 1, 'Premium': 2, 'Gold': 3}
+                                # Rename columns to match training data if needed
+                                col_mapping = {
+                                    'Age': 'age',
+                                    'Gender': 'gender',
+                                    'MonthlyUsageHours': 'monthly_usage_hours',
+                                    'NumTransactions': 'num_transactions',
+                                    'SubscriptionType': 'subscription_type',
+                                    'Complaints': 'complaints',
+                                    'LastLoginDays': 'last_login_days'
+                                }
+                                processed_df = processed_df.rename(columns=col_mapping)
                                 
-                                processed_df['Gender'] = processed_df['Gender'].map(gender_mapping)
-                                processed_df['SubscriptionType'] = processed_df['SubscriptionType'].map(subscription_mapping)
+                                # Feature Engineering
+                                processed_df["usage_intensity"] = processed_df["monthly_usage_hours"] / (processed_df["num_transactions"] + 1e-6)
+                                processed_df["complaint_ratio"] = processed_df["complaints"] / (processed_df["num_transactions"] + 1e-6)
+                                processed_df["log_monthly_usage"] = np.log1p(processed_df["monthly_usage_hours"])
+                                processed_df["log_num_transactions"] = np.log1p(processed_df["num_transactions"])
+                                
+                                def get_age_bucket(a):
+                                    if a <= 30:
+                                        return "Young"
+                                    elif a <= 50:
+                                        return "Adult"
+                                    else:
+                                        return "Senior"
+                                processed_df["age_bucket"] = processed_df["age"].apply(get_age_bucket)
                                 
                                 # Make predictions
-                                predictions = st.session_state.model.predict(processed_df[required_cols])
+                                # The pipeline expects specific columns
+                                model_cols = ["age", "gender", "monthly_usage_hours", "num_transactions", "complaints", "subscription_type", "usage_intensity", "complaint_ratio", "log_monthly_usage", "log_num_transactions", "age_bucket", "last_login_days"]
+                                predictions = st.session_state.model.predict(processed_df[model_cols])
                                 
                                 # Get probabilities if available
                                 try:
-                                    probabilities = st.session_state.model.predict_proba(processed_df[required_cols])
+                                    probabilities = st.session_state.model.predict_proba(processed_df[model_cols])
                                     churn_probabilities = probabilities[:, 1] * 100
                                 except:
                                     churn_probabilities = None
@@ -609,7 +908,8 @@ elif page == "📁 Batch Prediction":
             'MonthlyUsageHours': [50, 120, 30],
             'NumTransactions': [10, 25, 5],
             'SubscriptionType': ['Basic', 'Premium', 'Standard'],
-            'Complaints': [0, 2, 5]
+            'Complaints': [0, 2, 5],
+            'LastLoginDays': [10, 2, 20]
         })
         
         st.dataframe(example_data, use_container_width=True)
@@ -631,24 +931,35 @@ elif page == "📊 EDA Dashboard":
     
     if st.session_state.dataset is None:
         st.warning("⚠️ **No dataset loaded!** Please upload a dataset in the sidebar to view visualizations.")
-        st.info("The dataset should contain columns: Age, Gender, MonthlyUsageHours, NumTransactions, SubscriptionType, Complaints, and Churn")
+        st.info("The dataset should contain columns: Age, Gender, MonthlyUsageHours, NumTransactions, SubscriptionType, Complaints, LastLoginDays, and Churn")
     else:
+
         df = st.session_state.dataset.copy()
         
-        # Check for required columns
-        required_cols = ['Age', 'Gender', 'MonthlyUsageHours', 'NumTransactions', 
-                        'SubscriptionType', 'Complaints']
+        # Standardize column names to lowercase
+        df.columns = df.columns.str.lower()
         
-        # Check if Churn column exists (might be named differently)
+        # Check for required columns (now lowercase)
+        required_cols = ['age', 'gender', 'monthly_usage_hours', 'num_transactions', 
+                        'subscription_type', 'complaints', 'last_login_days']
+        
+        # Check if Churn column exists
         churn_col = None
-        for col in df.columns:
-            if 'churn' in col.lower():
-                churn_col = col
-                break
-        
+        if 'churn' in df.columns:
+            churn_col = 'churn'
+        elif 'churned' in df.columns:
+            churn_col = 'churned'
+            df.rename(columns={'churned': 'churn'}, inplace=True)
+            churn_col = 'churn'
+            
         if churn_col is None:
             st.error("❌ Dataset must contain a 'Churn' column!")
         else:
+            # Ensure proper capitalization for display if needed, but use lowercase for logic
+            # We will use the lowercase names for all plotting code below
+            
+            churned = df[churn_col].sum()
+            churn_rate = (churned / len(df)) * 100
             # Rename to standard 'Churn' if needed
             if churn_col != 'Churn':
                 df['Churn'] = df[churn_col]
@@ -657,6 +968,7 @@ elif page == "📊 EDA Dashboard":
             
             # Dataset Overview
             st.markdown("---")
+            st.markdown('<div class="st-card">', unsafe_allow_html=True)
             st.subheader("📈 Dataset Overview")
             
             overview_col1, overview_col2, overview_col3, overview_col4 = st.columns(4)
@@ -675,15 +987,17 @@ elif page == "📊 EDA Dashboard":
             with overview_col4:
                 retention_rate = 100 - churn_rate
                 st.metric("Retention Rate", f"{retention_rate:.1f}%")
+            st.markdown('</div>', unsafe_allow_html=True)
             
             st.markdown("---")
             
             # VISUALIZATION 1: Churn Distribution
+            st.markdown('<div class="st-card">', unsafe_allow_html=True)
             st.subheader("1️⃣ Churn Distribution")
             col1, col2 = st.columns([2, 1])
             
             with col1:
-                churn_counts = df['Churn'].value_counts()
+                churn_counts = df['churn'].value_counts()
                 fig1 = go.Figure(data=[
                     go.Bar(
                         x=['Not Churned', 'Churned'],
@@ -697,7 +1011,8 @@ elif page == "📊 EDA Dashboard":
                     title="Customer Churn Distribution",
                     xaxis_title="Churn Status",
                     yaxis_title="Number of Customers",
-                    height=400
+                    height=400,
+                    margin=dict(l=20, r=20, t=40, b=20)
                 )
                 st.plotly_chart(fig1, use_container_width=True)
             
@@ -709,17 +1024,19 @@ elif page == "📊 EDA Dashboard":
                     - **Retained**: {len(df) - churned:,} ({retention_rate:.1f}%)
                     - **Class Balance**: {'Imbalanced' if abs(churn_rate - 50) > 20 else 'Balanced'}
                 """)
+            st.markdown('</div>', unsafe_allow_html=True)
             
             st.markdown("---")
             
             # VISUALIZATION 2: Age Distribution by Churn
+            st.markdown('<div class="st-card">', unsafe_allow_html=True)
             st.subheader("2️⃣ Age Distribution by Churn Status")
             
-            if 'Age' in df.columns:
+            if 'age' in df.columns:
                 fig2 = go.Figure()
                 
                 for churn_status, color, name in [(0, '#38ef7d', 'Not Churned'), (1, '#ee0979', 'Churned')]:
-                    data = df[df['Churn'] == churn_status]['Age']
+                    data = df[df['churn'] == churn_status]['age']
                     fig2.add_trace(go.Histogram(
                         x=data,
                         name=name,
@@ -733,29 +1050,64 @@ elif page == "📊 EDA Dashboard":
                     xaxis_title="Age",
                     yaxis_title="Count",
                     barmode='overlay',
-                    height=400
+                    height=400,
+                    margin=dict(l=20, r=20, t=40, b=20)
                 )
                 st.plotly_chart(fig2, use_container_width=True)
                 
                 # Age statistics
                 col1, col2 = st.columns(2)
                 with col1:
-                    avg_age_churned = df[df['Churn'] == 1]['Age'].mean()
+                    avg_age_churned = df[df['churn'] == 1]['age'].mean()
                     st.metric("Avg Age (Churned)", f"{avg_age_churned:.1f} years")
                 with col2:
-                    avg_age_retained = df[df['Churn'] == 0]['Age'].mean()
+                    avg_age_retained = df[df['churn'] == 0]['age'].mean()
                     st.metric("Avg Age (Retained)", f"{avg_age_retained:.1f} years")
+            st.markdown('</div>', unsafe_allow_html=True)
+            
+            # VISUALIZATION 2.5: Gender Distribution (New)
+            if 'gender' in df.columns:
+                st.markdown('<div class="st-card">', unsafe_allow_html=True)
+                st.subheader("2️⃣.5️⃣ Gender Distribution by Churn")
+                
+                gender_churn = df.groupby(['gender', 'churn']).size().unstack(fill_value=0)
+                
+                fig_gender = go.Figure()
+                fig_gender.add_trace(go.Bar(
+                    name='Not Churned',
+                    x=gender_churn.index,
+                    y=gender_churn[0] if 0 in gender_churn.columns else [0] * len(gender_churn),
+                    marker_color='#38ef7d'
+                ))
+                fig_gender.add_trace(go.Bar(
+                    name='Churned',
+                    x=gender_churn.index,
+                    y=gender_churn[1] if 1 in gender_churn.columns else [0] * len(gender_churn),
+                    marker_color='#ee0979'
+                ))
+                
+                fig_gender.update_layout(
+                    title="Churn by Gender",
+                    xaxis_title="Gender",
+                    yaxis_title="Number of Customers",
+                    barmode='group',
+                    height=400,
+                    margin=dict(l=20, r=20, t=40, b=20)
+                )
+                st.plotly_chart(fig_gender, use_container_width=True)
+                st.markdown('</div>', unsafe_allow_html=True)
             
             st.markdown("---")
             
             # VISUALIZATION 3: Complaints vs Churn
+            st.markdown('<div class="st-card">', unsafe_allow_html=True)
             st.subheader("3️⃣ Complaints Analysis")
             
-            if 'Complaints' in df.columns:
+            if 'complaints' in df.columns:
                 fig3 = go.Figure()
                 
                 for churn_status, color, name in [(0, '#38ef7d', 'Not Churned'), (1, '#ee0979', 'Churned')]:
-                    data = df[df['Churn'] == churn_status]['Complaints']
+                    data = df[df['churn'] == churn_status]['complaints']
                     fig3.add_trace(go.Box(
                         y=data,
                         name=name,
@@ -766,53 +1118,83 @@ elif page == "📊 EDA Dashboard":
                 fig3.update_layout(
                     title="Complaints Distribution by Churn Status",
                     yaxis_title="Number of Complaints",
-                    height=400
+                    height=400,
+                    margin=dict(l=20, r=20, t=40, b=20)
                 )
                 st.plotly_chart(fig3, use_container_width=True)
                 
                 col1, col2 = st.columns(2)
                 with col1:
-                    avg_complaints_churned = df[df['Churn'] == 1]['Complaints'].mean()
+                    avg_complaints_churned = df[df['churn'] == 1]['complaints'].mean()
                     st.metric("Avg Complaints (Churned)", f"{avg_complaints_churned:.2f}")
                 with col2:
-                    avg_complaints_retained = df[df['Churn'] == 0]['Complaints'].mean()
+                    avg_complaints_retained = df[df['churn'] == 0]['complaints'].mean()
                     st.metric("Avg Complaints (Retained)", f"{avg_complaints_retained:.2f}")
+            st.markdown('</div>', unsafe_allow_html=True)
             
             st.markdown("---")
             
             # VISUALIZATION 4: Monthly Usage Hours vs Churn
+            st.markdown('<div class="st-card">', unsafe_allow_html=True)
             st.subheader("4️⃣ Monthly Usage Hours vs Churn")
             
-            if 'MonthlyUsageHours' in df.columns:
+            if 'monthly_usage_hours' in df.columns:
                 fig4 = px.scatter(
                     df,
-                    x='MonthlyUsageHours',
-                    y='NumTransactions' if 'NumTransactions' in df.columns else 'Age',
-                    color='Churn',
+                    x='monthly_usage_hours',
+                    y='num_transactions' if 'num_transactions' in df.columns else 'age',
+                    color='churn',
                     color_discrete_map={0: '#38ef7d', 1: '#ee0979'},
-                    labels={'Churn': 'Churn Status'},
+                    labels={'churn': 'Churn Status'},
                     title="Monthly Usage Hours vs Transactions (colored by Churn)",
                     height=400,
                     opacity=0.6
                 )
                 fig4.update_traces(marker=dict(size=8))
+                fig4.update_layout(margin=dict(l=20, r=20, t=40, b=20))
                 st.plotly_chart(fig4, use_container_width=True)
                 
                 col1, col2 = st.columns(2)
                 with col1:
-                    avg_usage_churned = df[df['Churn'] == 1]['MonthlyUsageHours'].mean()
+                    avg_usage_churned = df[df['churn'] == 1]['monthly_usage_hours'].mean()
                     st.metric("Avg Usage (Churned)", f"{avg_usage_churned:.1f} hrs")
                 with col2:
-                    avg_usage_retained = df[df['Churn'] == 0]['MonthlyUsageHours'].mean()
+                    avg_usage_retained = df[df['churn'] == 0]['monthly_usage_hours'].mean()
                     st.metric("Avg Usage (Retained)", f"{avg_usage_retained:.1f} hrs")
+            st.markdown('</div>', unsafe_allow_html=True)
+            
+            # VISUALIZATION 4.5: Transactions Distribution (New)
+            if 'num_transactions' in df.columns:
+                st.markdown('<div class="st-card">', unsafe_allow_html=True)
+                st.subheader("4️⃣.5️⃣ Transactions Distribution")
+                
+                fig_trans = go.Figure()
+                for churn_status, color, name in [(0, '#38ef7d', 'Not Churned'), (1, '#ee0979', 'Churned')]:
+                    data = df[df['churn'] == churn_status]['num_transactions']
+                    fig_trans.add_trace(go.Box(
+                        y=data,
+                        name=name,
+                        marker_color=color,
+                        boxmean='sd'
+                    ))
+                
+                fig_trans.update_layout(
+                    title="Number of Transactions by Churn Status",
+                    yaxis_title="Number of Transactions",
+                    height=400,
+                    margin=dict(l=20, r=20, t=40, b=20)
+                )
+                st.plotly_chart(fig_trans, use_container_width=True)
+                st.markdown('</div>', unsafe_allow_html=True)
             
             st.markdown("---")
             
             # VISUALIZATION 5: Subscription Type vs Churn
+            st.markdown('<div class="st-card">', unsafe_allow_html=True)
             st.subheader("5️⃣ Subscription Type Analysis")
             
-            if 'SubscriptionType' in df.columns:
-                subscription_churn = df.groupby(['SubscriptionType', 'Churn']).size().unstack(fill_value=0)
+            if 'subscription_type' in df.columns:
+                subscription_churn = df.groupby(['subscription_type', 'churn']).size().unstack(fill_value=0)
                 
                 fig5 = go.Figure()
                 fig5.add_trace(go.Bar(
@@ -833,22 +1215,25 @@ elif page == "📊 EDA Dashboard":
                     xaxis_title="Subscription Type",
                     yaxis_title="Number of Customers",
                     barmode='group',
-                    height=400
+                    height=400,
+                    margin=dict(l=20, r=20, t=40, b=20)
                 )
                 st.plotly_chart(fig5, use_container_width=True)
                 
                 # Churn rate by subscription
                 st.markdown("### Churn Rate by Subscription Type")
-                subscription_stats = df.groupby('SubscriptionType').agg({
-                    'Churn': ['sum', 'count', 'mean']
+                subscription_stats = df.groupby('subscription_type').agg({
+                    'churn': ['sum', 'count', 'mean']
                 }).round(3)
                 subscription_stats.columns = ['Churned', 'Total', 'Churn Rate']
                 subscription_stats['Churn Rate'] = (subscription_stats['Churn Rate'] * 100).round(1)
                 st.dataframe(subscription_stats, use_container_width=True)
+            st.markdown('</div>', unsafe_allow_html=True)
             
             st.markdown("---")
             
             # VISUALIZATION 6: Correlation Heatmap
+            st.markdown('<div class="st-card">', unsafe_allow_html=True)
             st.subheader("6️⃣ Feature Correlation Heatmap")
             
             numeric_cols = df.select_dtypes(include=[np.number]).columns.tolist()
@@ -869,14 +1254,15 @@ elif page == "📊 EDA Dashboard":
                 
                 fig6.update_layout(
                     title="Feature Correlation Matrix",
-                    height=500
+                    height=500,
+                    margin=dict(l=20, r=20, t=40, b=20)
                 )
                 st.plotly_chart(fig6, use_container_width=True)
                 
                 # Top correlations with Churn
-                if 'Churn' in corr_matrix.columns:
+                if 'churn' in corr_matrix.columns:
                     st.markdown("### 🔍 Top Correlations with Churn")
-                    churn_corr = corr_matrix['Churn'].drop('Churn').abs().sort_values(ascending=False)
+                    churn_corr = corr_matrix['churn'].drop('churn').abs().sort_values(ascending=False)
                     
                     col1, col2 = st.columns(2)
                     with col1:
@@ -889,10 +1275,12 @@ elif page == "📊 EDA Dashboard":
                             
                             Higher values indicate stronger relationship with churn.
                         """)
+            st.markdown('</div>', unsafe_allow_html=True)
             
             st.markdown("---")
             
             # VISUALIZATION 7: Feature Importance
+            st.markdown('<div class="st-card">', unsafe_allow_html=True)
             st.subheader("7️⃣ Feature Importance")
             
             if st.session_state.model is not None:
@@ -911,7 +1299,10 @@ elif page == "📊 EDA Dashboard":
                         color_continuous_scale='Viridis',
                         height=400
                     )
-                    fig7.update_layout(showlegend=False)
+                    fig7.update_layout(
+                        showlegend=False,
+                        margin=dict(l=20, r=20, t=40, b=20)
+                    )
                     st.plotly_chart(fig7, use_container_width=True)
                     
                     st.info(f"""
@@ -923,6 +1314,7 @@ elif page == "📊 EDA Dashboard":
                     st.warning("⚠️ Feature importance not available for this model type.")
             else:
                 st.warning("⚠️ Load a model to view feature importance analysis.")
+            st.markdown('</div>', unsafe_allow_html=True)
 
 # PAGE 3: ABOUT DATASET
 elif page == "ℹ️ About Dataset":
