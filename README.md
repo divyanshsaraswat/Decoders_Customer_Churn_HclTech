@@ -38,7 +38,8 @@ This project provides a complete customer churn prediction solution built with:
 Churning/
 │
 ├── app.py                             # Streamlit web application
-├── Customer_Churn_Prediction_.py      # Model training script
+├── Customer_Churn_Prediction_.ipynb   # Model training notebook
+├── Customer_Churn_Prediction_.py      # Model training script (Jupytext)
 ├── requirements.txt                   # Python dependencies
 ├── README.md                          # This file
 │

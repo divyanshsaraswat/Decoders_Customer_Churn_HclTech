@@ -3,7 +3,6 @@ pandas
 numpy
 plotly
 scikit-learn
-
 joblib
 xgboost
 jupytext
